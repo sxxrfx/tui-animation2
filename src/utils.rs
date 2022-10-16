@@ -1,18 +1,13 @@
-use cgmath::{dot, ElementWise, Vector2};
-use crossterm::event::{poll, read, Event};
+use cgmath::{Vector2};
 use crossterm::{
-    cursor::{DisableBlinking, EnableBlinking, MoveTo, RestorePosition, SavePosition},
+    cursor::{DisableBlinking,},
     execute, queue,
     style::{
-        self, Attribute, Color, Print, ResetColor, SetBackgroundColor, SetForegroundColor, Stylize,
+        self,  Color,  ResetColor,  SetForegroundColor, 
     },
-    terminal::{size, ScrollUp, SetSize},
-    ExecutableCommand, Result,
 };
-use std::fmt::{Display, Formatter, self};
+use std::fmt::{Debug, Display, Formatter, self};
 use std::io::{self, stdout, Write};
-use std::thread::sleep;
-use std::time;
 
 #[derive(Clone,Debug, Copy)]
 pub enum Pixel {
@@ -24,7 +19,7 @@ pub type V2ff = Vector2<f32>;
 #[derive(Clone, Copy)]
 pub struct Stars{
     pub depth: usize,
-    pub speed: f32,
+    pub velocity: V2ff,
     pub sprite: char,
 }
 
@@ -32,7 +27,7 @@ impl Default for Stars {
     fn default() -> Self {
         Self {
             depth: usize::default(),
-            speed: f32::default(),
+            velocity: V2ff::new(0., 0.),
             sprite: '*',
         }
     }
@@ -42,9 +37,28 @@ impl Display for Stars {
         write!(f, "{}", self.sprite) 
     }
 }
+impl Debug for Stars {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "Star: \n\
+        \tdepth:  {}\n\
+        \tvelocity:  ({}, {})\n\
+        \tsprite: {}",self.depth, self.velocity.x, self.velocity.y, self.sprite) 
+    }
+}
+
+impl Stars {
+    pub fn new(depth: usize, velocity: V2ff, sprite: char) -> Self {
+        Self {
+            depth: depth,
+            velocity: velocity,
+            sprite: sprite,
+        }
+    }
+}
 
 pub const WIDTH: usize = 80;
 pub const HEIGHT: usize = 40;
+pub const FPS: u8 = 30;
 pub const LEN_A: usize = WIDTH * HEIGHT;
 pub const LEN_B: usize = LEN_A /2;
 // const LEN_B: usize = LEN_A; 
