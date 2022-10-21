@@ -9,7 +9,7 @@ fn main() {
 
     // game.ball_animation();
     Game::init()
-        .ball_animation();
+        .space_animation();
 
     // let star = Stars::new(1, V2ff::new(5.6, 7.2), '*');
 

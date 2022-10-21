@@ -124,6 +124,11 @@ impl ScreenBuffer {
         // stdout.execute(RestorePosition).unwrap();
         stdout.flush().unwrap();
     }
+
+    pub fn star(&mut self, pos: V2ff,){
+        todo!()
+    }
+
     pub fn circle(&mut self, pos: V2ff, r: f32){
         let rr = V2ff::new(r, r);
         let bl = pos - rr;
